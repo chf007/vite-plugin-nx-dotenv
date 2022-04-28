@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-nx-dotenv",
   "version": "1.0.0",
-  "description": "",
+  "description": "Support Vite's [mode] mode of dotenv usage in Nx",
   "keywords": [
     "vite",
     "vite-plugin",
