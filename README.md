@@ -27,7 +27,7 @@ npm install vite-plugin-nx-dotenv --save-dev
 yarn add vite-plugin-nx-dotenv --dev
 ```
 
-### vite.base.config.ts
+### <WorkspaceRoot>/vite.base.config.ts
 
 ```typescript
 import { join } from 'path';
@@ -71,7 +71,7 @@ export const viteBaseConfig = async ({ command, mode }: ConfigEnv, nxDotEnv: any
 
 ```
 
-### apps/xxx/vite.config.ts
+### <WorkspaceRoot>/apps/xxx/vite.config.ts
 
 ```typescript
 import { defineConfig } from 'vite';
