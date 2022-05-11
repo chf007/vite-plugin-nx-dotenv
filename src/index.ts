@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
-import type { Plugin, ResolvedConfig } from 'vite';
+import type { Plugin, UserConfig } from 'vite';
 import { normalizePath } from 'vite';
 
 export const loadNxDotEnv = (mode: string, appEnvDir: string, globalEnvDir: string, prefixes: string | string[] = 'VITE_') => {
@@ -33,9 +33,9 @@ export const loadNxDotEnv = (mode: string, appEnvDir: string, globalEnvDir: stri
         }
     };
 
-    setEnv(appEnvDir);
-
     setEnv(globalEnvDir);
+
+    setEnv(appEnvDir);
 
     return env;
 };
@@ -49,14 +49,14 @@ export const nxDotEnvSupport = (options: NxDotEnvSupportOptions) => {
     return {
         name: 'vite-plugin-nx-dotenv',
 
-        configResolved(resolvedConfig) {
-            const appEnvDir = resolvedConfig.envDir
-                ? normalizePath(path.resolve(resolvedConfig.root, resolvedConfig.envDir))
-                : resolvedConfig.root;
-            const nxDotEnv = loadNxDotEnv(resolvedConfig.mode, appEnvDir, options.globalEnvDir, resolveEnvPrefix(resolvedConfig));
+        config(config, { mode, command }) {
+            const appEnvDir = config.envDir
+                ? normalizePath(path.resolve(config.root || process.cwd(), config.envDir))
+                : config.root || process.cwd();
+            const nxDotEnv = loadNxDotEnv(mode, appEnvDir, options.globalEnvDir, resolveEnvPrefix(config));
 
             for (const [key, value] of Object.entries(nxDotEnv)) {
-                resolvedConfig.env[key] = value;
+                process.env[key] = value;
             }
         },
     } as Plugin;
@@ -93,7 +93,7 @@ function arraify<T>(target: T | T[]): T[] {
 
 function resolveEnvPrefix({
                               envPrefix = 'VITE_'
-                          }: ResolvedConfig): string[] {
+                          }: UserConfig): string[] {
     envPrefix = arraify(envPrefix);
     if (envPrefix.some((prefix) => prefix === '')) {
         throw new Error(
